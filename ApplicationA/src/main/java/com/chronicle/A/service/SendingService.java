@@ -22,10 +22,16 @@ public class SendingService {
             Chronicle chronicle = ChronicleQueueBuilder.indexed(queueDir).build();
             ExcerptAppender appender = chronicle.createAppender();
             appender.startExcerpt();
+            log.info("Zapisuje");
             humansList.forEach(human -> {
-                appender.writeInstance(Human.class, human);
+                log.info(human.getId().toString());
+                appender.writeLong(human.getId());
+//                appender.writeInstance(Human.class, human);
+//                appender.writeUTF(human.getCity());
             });
+            log.info("Appender size: " + appender.size());
             appender.finish();
+            log.info("Appender size: " + appender.size());
 
         } catch (IOException e) {
             e.printStackTrace();

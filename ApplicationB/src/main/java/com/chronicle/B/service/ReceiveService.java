@@ -1,11 +1,13 @@
 package com.chronicle.B.service;
 
+import com.chronicle.B.dto.Human;
 import lombok.extern.slf4j.Slf4j;
 import net.openhft.chronicle.Chronicle;
 import net.openhft.chronicle.ChronicleQueueBuilder;
 import net.openhft.chronicle.ExcerptTailer;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,17 +17,26 @@ public class ReceiveService {
 
     public void loadFromQueue() {
         try {
-
-//            File file = new File(classLoader.getResource("chronicle-queue-send").getFile());
-            Chronicle chronicle = ChronicleQueueBuilder.indexed("chronicle-queue-send.data").build();
+            File queueDir = new File("chronicle-queue-send");
+            Chronicle chronicle = ChronicleQueueBuilder.indexed(queueDir).build();
             ExcerptTailer tailer = chronicle.createTailer();
-            List<String> objects = new ArrayList<>();
+            log.info("Chronicle size: " + chronicle.size());
+            List<Long> objects = new ArrayList<>();
             while (tailer.nextIndex()) {
-                objects.add(tailer.readUTF());
+                objects.add(tailer.readLong());
+                log.info("Current index: " + tailer.index());
+                tailer.nextIndex();
             }
+
+            log.info("Size of tailer: " + tailer.size());
+            log.info("Index of Start: " + tailer.toStart().index());
+            log.info("Index of End: " + tailer.toEnd().index());
+            log.info("Value of start: " + tailer.toStart().readLong());
+            log.info("Value of end: " + tailer.toEnd().readLong());
+
             tailer.finish();
-            log.info("App B is okey");
-            objects.forEach(log::info);
+            log.info("Size: " + objects.size());
+            objects.forEach(l -> log.info(l.toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }
