@@ -25,12 +25,12 @@ public class SendingService {
             log.info("Zapisuje");
             humansList.forEach(human -> {
                 log.info(human.getId().toString());
+                appender.startExcerpt();
                 appender.writeLong(human.getId());
+                appender.finish();
 //                appender.writeInstance(Human.class, human);
 //                appender.writeUTF(human.getCity());
             });
-            log.info("Appender size: " + appender.size());
-            appender.finish();
             log.info("Appender size: " + appender.size());
 
         } catch (IOException e) {

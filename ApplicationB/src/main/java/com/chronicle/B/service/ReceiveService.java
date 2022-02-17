@@ -1,6 +1,5 @@
 package com.chronicle.B.service;
 
-import com.chronicle.B.dto.Human;
 import lombok.extern.slf4j.Slf4j;
 import net.openhft.chronicle.Chronicle;
 import net.openhft.chronicle.ChronicleQueueBuilder;
@@ -24,8 +23,8 @@ public class ReceiveService {
             List<Long> objects = new ArrayList<>();
             while (tailer.nextIndex()) {
                 objects.add(tailer.readLong());
+                tailer.finish();
                 log.info("Current index: " + tailer.index());
-                tailer.nextIndex();
             }
 
             log.info("Size of tailer: " + tailer.size());
@@ -34,7 +33,6 @@ public class ReceiveService {
             log.info("Value of start: " + tailer.toStart().readLong());
             log.info("Value of end: " + tailer.toEnd().readLong());
 
-            tailer.finish();
             log.info("Size: " + objects.size());
             objects.forEach(l -> log.info(l.toString()));
         } catch (Exception e) {
